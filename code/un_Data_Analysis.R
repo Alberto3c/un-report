@@ -118,3 +118,60 @@ anti_join(gapminder_data, c02_emissions_2005, by="country")
 
 #Full-join
 full_join(c02_emissions_2005, gapminder_data_2007)%>% View()
+
+#Finding Relationship Between C02 and GDP
+joined_c02_pop <- inner_join(c02_emissions_2005, gapminder_data_2007)
+
+#Write data to a csv file and export
+write_csv(joined_c02_pop, file = "data/joined_c02_pop.csv")
+
+#Read the csv file we just created back into R
+c02_and_pop <- read_csv("data/joined_c02_pop.csv")
+
+#Creating a histogram of gdpPercap and lifeExp separately
+ggplot(c02_and_pop)+
+  aes(x=gdpPercap)+
+  geom_histogram()+
+  theme_prism()
+
+ggplot(c02_and_pop)+
+  aes(x=lifeExp)+
+  geom_histogram()+
+  theme_prism()
+
+#Creating a bar plot to compare gdpPercap by country - random and bonus, can use
+# the geom_col to create a bar graph comparing data within two columns
+ggplot(c02_and_pop)+
+  aes(x = country, y = gdpPercap)+
+  geom_col()
+
+#Creating a point chart to compare GDP per capita and per capita emissions
+ggplot(data= c02_and_pop) +
+       aes(x = gdpPercap, y = per_capita_emissions) +
+       geom_point()+
+       geom_smooth(method = 'lm', se = FALSE)+
+       labs(x = "GDP Per Capita", y = "C02 Emissions Per Capita(Metric Tons)", 
+            title = "Comparing Per Capita C02 Emissions and GDP")+
+       theme_classic()
+
+#Install ggpubr to make plots "publication ready"
+install.packages("ggpubr")
+library(ggpubr)
+
+#Add some elements to ggpubr to make the grpahic nicer, in this case it will
+# include the r^2 value of the linear regression plotted
+gdp_c02_plot <- ggplot(data= c02_and_pop) +
+  aes(x = gdpPercap, y = per_capita_emissions) +
+  geom_point()+
+  geom_smooth(method = 'lm', se = FALSE)+
+  labs(x = "GDP Per Capita", y = "C02 Emissions Per Capita(Metric Tons)", 
+       title = "Comparing Per Capita C02 Emissions and GDP")+
+  theme_classic()+
+  ggpubr::stat_regline_equation(aes(label = after_stat(rr.label)))
+
+#Saving the plot generated using ggsave
+ggsave(gdp_c02_plot, filename = "figures/gdp_vs_c02_plot.png",
+       height = 4,
+       width = 6,
+       units = "in",
+       dpi = 300)

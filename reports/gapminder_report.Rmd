@@ -1,0 +1,30 @@
+---
+title: "UN Report on the Relationship Between C02 Emissions, GDP, and Life Expectancy"
+author: "Alberto Correa III"
+date: "1-18-2023"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r load-packages}
+library(tidyverse)
+library(ggprism)
+```
+
+This report was prepared to the attention of the United Nations. It analyzes the relationship between a country's GDP, its life expectancy and CO2 emissions. Our goal is to determine to what degree a country’s economic strength or weakness may be related to its public health status and impact on climate pollution. We hypothesize that both life expectancy and CO2 emissions increase with a country's GDP.
+
+```{r read-data}
+gapminder_1997 <- read_csv("data/gapminder_1997.csv")
+```
+
+```{r gdp-lifeExp-1997-plot}
+# Make plot of GDP vs. LifeExp
+ggplot(data = gapminder_1997)+ 
+         aes(x = gdpPercap , y = lifeExp)+
+         labs(x = "GDP per capita", y = "Life Expectancy")+
+         geom_point()+
+         theme_prism()
+```
